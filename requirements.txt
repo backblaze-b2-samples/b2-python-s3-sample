@@ -1,4 +1,2 @@
 boto3
 python-dotenv
-os
-sys
