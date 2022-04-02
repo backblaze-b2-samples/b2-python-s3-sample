@@ -5,7 +5,10 @@
 """ A python script for working with Backblaze B2 """
 
 """ More Instructions here:  http://www.backblaze.com/b2/docs/s3/python.html """
-""" Video Code Walkthrough here: https://youtu.be/1nw0gYMhFJg """
+""" Video Code Walkthrough - This preview has video in two parts.  
+        Note:  function get_b2_resource() here refactored from get_b2_object() in videos
+        Part 1 is here: https://www.youtube.com/watch?v=PKu3Gfy-DrI
+        Part 2 is here: https://www.youtube.com/watch?v=n7HCst0yFkg """
 """ This source code on Github here:  
     https://github.com/backblaze-b2-samples/b2-python-s3-sample/ """
 """ Sample data in *PUBLIC* bucket here:  

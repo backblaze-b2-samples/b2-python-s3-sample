@@ -10,7 +10,7 @@ For learning, Backblaze B2 Developer Quick Starts provide developers the followi
 **RESOURCES:**
 <OL>
 <LI>**Sample Application** – Open Source and shared on GitHub for you to download.  Link for [Preview Release (v1.0) is here](https://github.com/backblaze-b2-samples/b2-python-s3-sample/releases/tag/v1.0). </LI>
-<LI>**Video Code Walkthroughs of Sample Application** – For you to share and rewatch on demand on YouTube. This preview has video in two parts.  [Part 1 is here](https://www.youtube.com/watch?v=PKu3Gfy-DrI). [Part 2 is here](https://www.youtube.com/watch?v=n7HCst0yFkg).</LI>
+<LI>**Video Code Walkthroughs of Sample Application** – For you to share and rewatch on demand on YouTube. This preview has video in two parts.  [Part 1 is here](https://www.youtube.com/watch?v=PKu3Gfy-DrI). [Part 2 is here](https://www.youtube.com/watch?v=n7HCst0yFkg). Note: function get_b2_resource() here refactored from get_b2_object() in videos</LI>
 <LI>**Hosted Sample Data** –  A media application with application keys shared for read-only access. The sample media application is hosted in a  Backblaze B2 bucket configured with PUBLIC access.  You can [preview the media application here](https://s3.us-west-002.backblazeb2.com/developer-b2-quick-start/album/photos.html). (Navigate with left/right arrows, or selecting thumbnails along bottom.)</LI>
 <LI>**Guided Instructions** – Detailed guided instructions for the full series are [published here](https://backblaze.com/b2/docs/python.html). These instructions guide you how to download the sample code, run it yourself, and then use the code as you see fit. Including incorporating it into your own applications.</LI>
 </OL>
