@@ -105,13 +105,12 @@ def download_file(bucket, directory, local_name, key_name, b2):
         print('error', ce)
 
 # Return a boto3 resource object for B2 service
-def get_b2_resource(endpoint, keyID, applicationKey):
+def get_b2_resource(endpoint, key_id, application_key):
     b2 = boto3.resource(service_name='s3',
-                        endpoint_url=endpoint,                # Backblaze endpoint
-                        aws_access_key_id=keyID,              # Backblaze keyID
-                        aws_secret_access_key=applicationKey, # Backblaze applicationKey
-                        config = Config(
-                            # region_name=region_name, #Ask Pat role region_name needed for?
+                        endpoint_url=endpoint,     # Backblaze endpoint
+                        aws_access_key_id=key_id,  # Backblaze keyID
+                        aws_secret_access_key=application_key,  # Backblaze applicationKey
+                        config=Config(
                             signature_version='s3v4',
                     ))
     return b2
