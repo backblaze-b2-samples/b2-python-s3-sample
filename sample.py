@@ -164,8 +164,8 @@ def list_objects_browsable_url(bucket, endpoint, b2):
         bucket_object_keys = list_object_keys(bucket, b2)
 
         return_list = []                # create empty list
-        for url in bucket_object_keys:  # iterate bucket_objects
-            url = "%s/%s/%s" % (endpoint, bucket, url) # format and concatenate strings as valid url
+        for key in bucket_object_keys:  # iterate bucket_objects
+            url = "%s/%s/%s" % (endpoint, bucket, key) # format and concatenate strings as valid url
             return_list.append(url)     # for each item in bucket_objects append value of 'url' to list
         return return_list              # return list of keys from response
 
