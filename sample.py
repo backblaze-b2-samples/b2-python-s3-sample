@@ -213,14 +213,14 @@ def main():
     """ :type : pyboto3.s3 """  # pyboto3 provides Pythonic Interface for typehint for autocomplete in pycharm
 
     # get environment variables from file .env
-    key_id_private_ro = os.getenv("key_id_private_ro")  # Backblaze keyID
+    key_id_private_ro = os.getenv("KEY_ID_PRIVATE_RO")  # Backblaze keyID
     application_key_private_ro = os.getenv("APPLICATION_KEY_PRIVATE_RO") # Backblaze applicationKey
 
     # Call function to return reference to B2 service using a second set of keys
     b2_private = get_b2_resource(endpoint, key_id_private_ro, application_key_private_ro)
 
     # 01 - list_object_keys
-    if len(args) == 1 and args[0] == '01':
+    if len(args) == 0 or (len(args) == 1 and args[0] == '01'):
         # Call function to return list of object 'keys'
         bucket_object_keys = list_object_keys(PUBLIC_BUCKET_NAME, b2)
         for key in bucket_object_keys:
@@ -387,13 +387,6 @@ def main():
         print('\nAFTER - Buckets ')
         list_buckets( client )
 
-
-    else:
-
-        print('Hello World!')
-        print('in else block  ;-)')
-
-        print('\nPass a param to execute conditional blocks  ;-)')
 
 # Optional (not strictly required)
 if __name__ == '__main__':
