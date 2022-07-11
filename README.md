@@ -6,12 +6,14 @@ Backblaze B2 Developer Quick Starts provide developers an "instant on" experienc
 For learning, Backblaze B2 Developer Quick Starts provide developers the following four integrated resources.  Developers can use any one, or any combination of all four as best fits each developer's style. 
 
 **RESOURCES:**
-<OL>
-<LI>**Sample Application** – Open Source and shared on GitHub for you to download.  Link for [GitHub repository is here](https://github.com/backblaze-b2-samples/b2-python-s3-sample/). </LI>
-<LI>**Video Code Walkthroughs of Sample Application** – For you to share and rewatch on demand on YouTube. The [playlist for related videos is here](https://www.youtube.com/c/backblaze/playlists).</LI>
-<LI>**Hosted Sample Data** –  A media application with application keys shared for read-only access. The sample media application is hosted in a  Backblaze B2 bucket configured with PUBLIC access.  You can [preview the media application here](https://s3.us-west-002.backblazeb2.com/developer-b2-quick-start/album/photos.html). (Navigate with left/right arrows, or selecting thumbnails along bottom.)</LI>
-<LI>**Guided Instructions** – Detailed guided instructions for the full series are [published here](https://backblaze.com/b2/docs/python.html). These instructions guide you how to download the sample code, run it yourself, and then use the code as you see fit. Including incorporating it into your own applications.</LI>
-</OL>
+
+1. **Sample Application** – Open Source and shared on GitHub for you to download.  Link for [GitHub repository is here](https://github.com/backblaze-b2-samples/b2-python-s3-sample/).
+
+2. **Video Code Walkthroughs of Sample Application** – For you to share and rewatch on demand on YouTube. The [playlist for related videos is here](https://www.youtube.com/c/backblaze/playlists).
+
+3. **Hosted Sample Data** –  A media application with application keys shared for read-only access. The sample media application is hosted in a  Backblaze B2 bucket configured with PUBLIC access.  You can [preview the media application here](https://s3.us-west-002.backblazeb2.com/developer-b2-quick-start/album/photos.html). (Navigate with left/right arrows, or selecting thumbnails along bottom.)
+
+4. **Guided Instructions** – Detailed guided instructions for the full series are [published here](https://backblaze.com/b2/docs/python.html). These instructions guide you how to download the sample code, run it yourself, and then use the code as you see fit. Including incorporating it into your own applications.
 
 If you want to learn the ins-and-outs of Backblaze B2 cloud storage and how to implement solutions with it using Python then this Backblaze B2 Developer Quick Start is for you.  
 

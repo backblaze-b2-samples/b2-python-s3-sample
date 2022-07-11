@@ -115,7 +115,7 @@ def get_b2_client(endpoint, keyID, applicationKey):
 
 
 # Return a boto3 resource object for B2 service
-def get_b2_resource(endpoint, keyID, applicationKey):
+def get_b2_resource(endpoint, key_id, application_key):
     b2 = boto3.resource(service_name='s3',
                         endpoint_url=endpoint,                # Backblaze endpoint
                         aws_access_key_id=keyID,              # Backblaze keyID
@@ -135,11 +135,7 @@ def get_object_presigned_url(bucket, key, expiration_seconds, b2):
                                                                     'Bucket': bucket,
                                                                     'Key': key
                                                                 } )
-
-        print('RESPONSE:  ', response)
-
-        file_url = '%s/%s/%s' % (b2.meta.client.meta.endpoint_url, bucket, key)
-        return file_url
+        return response
 
     except ClientError as ce:
         print('error', ce)
@@ -161,15 +157,15 @@ def list_buckets(b2_client, raw_object=False):
     except ClientError as ce:
         print('error', ce)
 
-# List the objects in the specified bucket
-def list_objects(bucket, b2):
+# List the keys of the objects in the specified bucket
+def list_object_keys(bucket, b2):
     try:
         response = b2.Bucket(bucket).objects.all()
 
         return_list = []               # create empty list
         for object in response:        # iterate over response
-            return_list.append(object) # for each item in response append object to list
-        return return_list             # return list of objects from response
+            return_list.append(object.key) # for each item in response append object.key to list
+        return return_list             # return list of keys from response
 
     except ClientError as ce:
         print('error', ce)
@@ -178,13 +174,13 @@ def list_objects(bucket, b2):
 # List browsable URLs of the objects in the specified bucket - Useful for *PUBLIC* buckets
 def list_objects_browsable_url(bucket, endpoint, b2):
     try:
-        bucket_objects = list_objects(bucket, b2)
+        bucket_object_keys = list_object_keys(bucket, b2)
 
-        return_list = []               # create empty list
-        for object in bucket_objects:  # iterate bucket_objects
-            url = "%s/%s/%s" % (endpoint, bucket, object.key)
-            return_list.append(url)    # for each item in bucket_objects append value of 'url' to list
-        return return_list             # return list of keys from response
+        return_list = []                # create empty list
+        for key in bucket_object_keys:  # iterate bucket_objects
+            url = "%s/%s/%s" % (endpoint, bucket, key) # format and concatenate strings as valid url
+            return_list.append(url)     # for each item in bucket_objects append value of 'url' to list
+        return return_list              # return list of keys from response
 
     except ClientError as ce:
         print('error', ce)
@@ -227,7 +223,7 @@ def main():
     b2_client = get_b2_client(endpoint, key_id_ro, application_key_ro)
 
     # get environment variables from file .env
-    key_id_private_ro = os.getenv("key_id_private_ro")  # Backblaze keyID
+    key_id_private_ro = os.getenv("KEY_ID_PRIVATE_RO")  # Backblaze keyID
     application_key_private_ro = os.getenv("APPLICATION_KEY_PRIVATE_RO") # Backblaze applicationKey
 
     # Call function to return reference to B2 service using a second set of keys
@@ -246,11 +242,11 @@ def main():
 
     # BEGIN if elif BLOCKS FOR EACH PARAM
     # 01 - list_objects
-    if len(args) == 1 and args[0] == '01':
+    if len(args) == 0 or (len(args) == 1 and args[0] == '01'):
         # Call function to return list of object 'keys'
-        bucket_object_keys = list_objects(PUBLIC_BUCKET_NAME, b2)
-        for object in bucket_object_keys:
-            print(object.key)
+        bucket_object_keys = list_object_keys(PUBLIC_BUCKET_NAME, b2)
+        for key in bucket_object_keys:
+            print(key)
 
         print('\nBUCKET ', PUBLIC_BUCKET_NAME, ' CONTAINS ', len(bucket_object_keys), ' OBJECTS')
 
@@ -283,10 +279,10 @@ def main():
     # 05 - PRESIGNED URLS
     elif len(args) == 1 and args[0] == '05':
         my_bucket = b2_private.Bucket(PRIVATE_BUCKET_NAME)
-        print('my_bucket', my_bucket)
+        print('my_bucket: ', my_bucket)
         for my_bucket_object in my_bucket.objects.all():
-            print(my_bucket_object)
-            get_object_presigned_url(PRIVATE_BUCKET_NAME, my_bucket_object.key, 3000, b2_private)
+            file_url = get_object_presigned_url(PRIVATE_BUCKET_NAME, my_bucket_object.key, 3000, b2_private)
+            print (file_url)
 
 
     # 06 - DOWNLOAD FILE
@@ -400,13 +396,6 @@ def main():
         print('\nAFTER - Buckets ')
         list_buckets( b2_client )
 
-
-    else:
-
-        print('Hello World!')
-        print('in else block  ;-)')
-
-        print('\nPass a param to execute conditional blocks  ;-)')
 
 # Optional (not strictly required)
 if __name__ == '__main__':
