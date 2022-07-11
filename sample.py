@@ -104,6 +104,16 @@ def download_file(bucket, directory, local_name, key_name, b2):
     except ClientError as ce:
         print('error', ce)
 
+
+# Return a boto3 client object for B2 service
+def get_b2_client(endpoint, keyID, applicationKey):
+        b2_client = boto3.client(service_name='s3',
+                                 endpoint_url=endpoint,                # Backblaze endpoint
+                                 aws_access_key_id=keyID,              # Backblaze keyID
+                                 aws_secret_access_key=applicationKey) # Backblaze applicationKey
+        return b2_client
+
+
 # Return a boto3 resource object for B2 service
 def get_b2_resource(endpoint, keyID, applicationKey):
     b2 = boto3.resource(service_name='s3',
@@ -111,15 +121,14 @@ def get_b2_resource(endpoint, keyID, applicationKey):
                         aws_access_key_id=keyID,              # Backblaze keyID
                         aws_secret_access_key=applicationKey, # Backblaze applicationKey
                         config = Config(
-                            # region_name=region_name, #Ask Pat role region_name needed for?
                             signature_version='s3v4',
                     ))
     return b2
 
+
 # Return presigned URL of the object in the specified bucket - Useful for *PRIVATE* buckets
 def get_object_presigned_url(bucket, key, expiration_seconds, b2):
     try:
-        #ORIGINAL
         response = b2.meta.client.generate_presigned_url(ClientMethod='get_object',
                                                          ExpiresIn=expiration_seconds,
                                                          Params={
@@ -137,15 +146,18 @@ def get_object_presigned_url(bucket, key, expiration_seconds, b2):
 
 
 # List the buckets in account in the specified region
-def list_buckets(client, raw_object=False):
+def list_buckets(b2_client, raw_object=False):
     try:
+        my_buckets_response = b2_client.list_buckets()
+
         print('\nBUCKETS')
-        for bucket_object in client.list_buckets()[ 'Buckets' ]:
+        for bucket_object in my_buckets_response[ 'Buckets' ]:
             print(bucket_object[ 'Name' ])
 
         if raw_object:
-            print('\nFULL RAW RESPONSE')
-            print('bucket_list:  ', client.list_buckets()[ 'Buckets' ])
+            print('\nFULL RAW RESPONSE:')
+            print(my_buckets_response)
+
     except ClientError as ce:
         print('error', ce)
 
@@ -211,11 +223,8 @@ def main():
     # Call function to return reference to B2 service
     b2 = get_b2_resource(endpoint, key_id_ro, application_key_ro)
 
-    client = boto3.client(service_name='s3',
-                          endpoint_url=endpoint,
-                          aws_access_key_id=key_id_ro,
-                          aws_secret_access_key=application_key_ro)
-    """ :type : pyboto3.s3 """  # pyboto3 provides Pythonic Interface for typehint for autocomplete in pycharm
+    # Call function to return reference to B2 service
+    b2_client = get_b2_client(endpoint, key_id_ro, application_key_ro)
 
     # get environment variables from file .env
     key_id_private_ro = os.getenv("key_id_private_ro")  # Backblaze keyID
@@ -224,6 +233,18 @@ def main():
     # Call function to return reference to B2 service using a second set of keys
     b2_private = get_b2_resource(endpoint, key_id_private_ro, application_key_private_ro)
 
+    # WRITE OPERATIONS - THIS BLOCK CREATES B2 OBJECTS THAT SUPPORT WRITE OPERATIONS FOR BUCKETS IN YOUR ACCOUNT
+    if len(args) == 1 and args[0] >= '20':
+        endpoint_rw = os.getenv("ENDPOINT_URL_YOUR_BUCKET")  # getting environment variables from file .env
+        key_id_rw = os.getenv("KEY_ID_YOUR_ACCOUNT")  # getting environment variables from file .env
+        application_key_rw = os.getenv("APPLICATION_KEY_YOUR_ACCOUNT")  # getting environment variables from file .env
+        # Call function to return reference to B2 service
+        b2_rw = get_b2_resource(endpoint_rw, key_id_rw, application_key_rw)
+
+        # Call function to return reference to B2 service
+        b2_client_rw = get_b2_client(endpoint_rw, key_id_rw, application_key_rw)
+
+    # BEGIN if elif BLOCKS FOR EACH PARAM
     # 01 - list_objects
     if len(args) == 1 and args[0] == '01':
         # Call function to return list of object 'keys'
@@ -253,8 +274,14 @@ def main():
 
         print('\nBUCKET ', PRIVATE_BUCKET_NAME, ' CONTAINS ', len(browsable_urls), ' FILES')
 
-    # 03 - PRESIGNED URLS
-    elif len(args) == 1 and args[0] == '03':
+    # 04 - LIST BUCKETS
+    elif len(args) == 1 and args[0] == '04':
+
+        list_buckets( b2_client, raw_object=True )
+
+
+    # 05 - PRESIGNED URLS
+    elif len(args) == 1 and args[0] == '05':
         my_bucket = b2_private.Bucket(PRIVATE_BUCKET_NAME)
         print('my_bucket', my_bucket)
         for my_bucket_object in my_bucket.objects.all():
@@ -262,14 +289,8 @@ def main():
             get_object_presigned_url(PRIVATE_BUCKET_NAME, my_bucket_object.key, 3000, b2_private)
 
 
-    # 04 - LIST BUCKETS
-    elif len(args) == 1 and args[0] == '04':
-
-        list_buckets( client, raw_object=True )
-
-
-    # 05 - DOWNLOAD FILE
-    elif len(args) == 1 and args[0] == '05':
+    # 06 - DOWNLOAD FILE
+    elif len(args) == 1 and args[0] == '06':
 
         download_file(bucket = PRIVATE_BUCKET_NAME,
                       directory = LOCAL_DIR,
@@ -278,24 +299,11 @@ def main():
                       b2 = b2_private)
 
 
-    # WRITE OPERATIONS - THIS BLOCK CREATES B2 OBJECTS THAT SUPPORT WRITE OPERATIONS FOR BUCKETS IN YOUR ACCOUNT
-    elif len(args) == 1 and args[0] >= '20':
-        endpoint_rw = os.getenv("ENDPOINT_URL_YOUR_BUCKET")  # getting environment variables from file .env
-        key_id_rw = os.getenv("KEY_ID_YOUR_ACCOUNT")  # getting environment variables from file .env
-        application_key_rw = os.getenv("APPLICATION_KEY_YOUR_ACCOUNT")  # getting environment variables from file .env
-        # Call function to return reference to B2 service
-        b2_rw = get_b2_resource(endpoint_rw, key_id_rw, application_key_rw)
-
-        client_rw = boto3.client(service_name='s3',
-                                 endpoint_url=endpoint_rw,
-                                 aws_access_key_id=key_id_rw,
-                                 aws_secret_access_key=application_key_rw)
-
     # 20 - CREATE BUCKET - *SUCCESS*
     elif len(args) == 1 and args[0] == '20':
 
         print('BEFORE CREATE NEW BUCKET NAMED:  ',NEW_BUCKET_NAME )
-        list_buckets( client )
+        list_buckets( b2_client )
 
         b2 = b2_rw
 
@@ -305,7 +313,7 @@ def main():
         print('RESPONSE:  ', response)
 
         print('\nAFTER CREATE BUCKET')
-        list_buckets( client )
+        list_buckets( b2_client )
 
     # 21 - UPLOAD FILE
     elif len(args) == 1 and args[0] == '21':
@@ -326,7 +334,7 @@ def main():
 
         response = b2.create_bucket( Bucket=TRANSIENT_BUCKET_NAME )
 
-        list_buckets( client )
+        list_buckets( b2_client )
 
         print('\nBEFORE CONTENTS BUCKET ', TRANSIENT_BUCKET_NAME)
         copy_file(NEW_BUCKET_NAME, TRANSIENT_BUCKET_NAME, file1, file1, b2)
@@ -364,11 +372,11 @@ def main():
 
         print('File Name to Delete:  ', file1)
 
-        client = client_rw
+        b2_client = b2_client_rw
 
         delete_files_all_versions(NEW_BUCKET_NAME,
                                   [file1],
-                                  client )
+                                  b2_client )
 
         print('\nAFTER - Bucket Contents ')
         my_bucket = b2.Bucket(NEW_BUCKET_NAME)
@@ -381,7 +389,7 @@ def main():
     elif len(args) == 1 and args[0] == '32':
 
         print('BEFORE - Buckets ')
-        list_buckets( client )
+        list_buckets( b2_client )
 
         print('Bucket Name to Delete:  ', NEW_BUCKET_NAME)
 
@@ -390,7 +398,7 @@ def main():
         delete_bucket(NEW_BUCKET_NAME, b2)
 
         print('\nAFTER - Buckets ')
-        list_buckets( client )
+        list_buckets( b2_client )
 
 
     else:
