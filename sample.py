@@ -115,7 +115,7 @@ def get_b2_client(endpoint, keyID, applicationKey):
 
 
 # Return a boto3 resource object for B2 service
-def get_b2_resource(endpoint, key_id, application_key):
+def get_b2_resource(endpoint, keyID, applicationKey):
     b2 = boto3.resource(service_name='s3',
                         endpoint_url=endpoint,                # Backblaze endpoint
                         aws_access_key_id=keyID,              # Backblaze keyID
