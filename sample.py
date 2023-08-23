@@ -4,7 +4,7 @@
 
 """ A python script for working with Backblaze B2 """
 
-""" More Instructions here:  http://www.backblaze.com/b2/docs/s3/python.html """
+""" More Instructions here:  https://www.backblaze.com/docs/cloud-storage-python-developer-quick-start-guide """
 """ Video Code Walkthroughs - A playlist for related videos is here:   
         https://www.youtube.com/c/backblaze/playlists  """
 """ This source code on Github here:  
