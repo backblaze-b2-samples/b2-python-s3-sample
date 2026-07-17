@@ -112,8 +112,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-# Unusually, we are checking in .env, since it contains read-only, public credentials
-#.env
+.env
 .venv
 env/
 venv/
